@@ -3,7 +3,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session);
-
+const path = require("path");
 const usersRouter = require("../users/users-router.js");
 const authRouter = require("../auth/auth-router.js");
 
@@ -34,11 +34,21 @@ server.use(helmet());
 server.use(express.json());
 server.use(cors());
 
+
+server.use(express.static(path.join(__dirname, "client/build")))
+
 server.use("/auth", authRouter);
 server.use("/api/users", usersRouter);
 
 server.get("/", (req, res) => {
   res.json({ api: "up" });
 });
+
+
+server.get("*", (req, res) => {
+  // send back the index.html contained inside client/build
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
+ })
+ 
 
 module.exports = server;
