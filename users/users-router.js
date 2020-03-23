@@ -2,15 +2,15 @@ const router = require("express").Router();
 
 const Users = require("./users-model.js");
 
-function protected(req, res, next) {
+function authMiddleware(req, res, next) {
   if (req.session && req.session.user) {
-    next()
+    next();
   } else {
-    res.status(401).json({ message: 'no session' })
+    res.status(401).json({ message: "you shall not pass" });
   }
 }
 
-router.get("/", protected, (req, res) => {
+router.get("/", authMiddleware, (req, res) => {
   Users.find()
     .then(users => {
       res.json(users);
